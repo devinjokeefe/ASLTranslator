@@ -4,15 +4,20 @@ import subprocess
 import glob
 from PIL import Image, ImageFont, ImageDraw
 import numpy as np
+from pathlib import Path
 
 Prod = True
 
 if (Prod):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-Net = load_model(r'C:\Users\Devin\ASL_Model.h5')
+Net = load_model(r'C:\Users\Devin\Documents\GitHub\ASL_Data\model\ASL_Model.h5')
 
 def VidToImg (Video, NewFile):
+    
+    my_path = Path(r"C:\Users\Devin\Documents\GitHub\ASL_Data\VidFolder\summary.mp4")
+    if (my_path.exists()):
+        os.remove(r"C:\Users\Devin\Documents\GitHub\ASL_Data\VidFolder\summary.mp4")
     duration = subprocess.check_output(['ffprobe', '-i', Video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=%s' % ("p=0")])
 
     keepChars = set('.0123456789')
@@ -31,8 +36,7 @@ def VidToImg (Video, NewFile):
     PredictVal ()
 
 def PredictVal ():
-    
-    answers =["BOWTIE", "ADVISE_INFLUENCE", "AFRAID", "AGAIN", "ANSWER", "APPOINTMENT", "ART_DESIGN", "BIG", "BLAME", "BOSS", "CAMP", "CANCEL_CRITICIZE", "CHAT", "CITY_COMMUNITY", "COLLECT", "COME", "COP", "COPY", "CUTE", "DATE_DESSERT", "DECREASE", "DEPRESS", "DEVELOP", "DEVIL_MISCHIEVOUS", "DISAPPOINT", "DISCUSS", "DOCTOR", "DRESS_CLOTHES", "DRINK", "EAT", "EMPHASIZE", "EXCUSE", "EXPERT", "FACE", "FED-UP_FULL", "FIFTH", "FINGERSPELL", "FIRE_BURN", "GET-TICKET", "GO", "GOLD_ns-CALIFORNIA", "GOVERNMENT", "GROUND", "GUITAR", "HAPPY", "IN", "INCLUDE_INVOLVE", "INFORM", "INJECT", "ISLAND_INTEREST", "LIVE", "LOOK", "MACHINE", "MAD", "MAN", "MARRY", "NICE_CLEAN", "PAST", "POSS", "RUN", "SAME", "SHELF_FLOOR", "SHOW", "SILLY", "STAND-UP", "TOUGH", "VACATION", "WALK", "WEEKEND", "WORK-OUT"]
+    answers =["BOWTIE", "ADVISE/INFLUENCE", "AFRAID", "AGAIN", "ANSWER", "APPOINTMENT", "ART/DESIGN", "BIG", "BLAME", "BOSS", "CAMP", "CANCEL/CRITICIZE", "CHAT", "CITY/COMMUNITY", "COLLECT", "COME", "COP", "COPY", "CUTE", "DATE/DESSERT", "DECREASE", "DEPRESS", "DEVELOP", "DEVIL/MISCHIEVOUS", "DISAPPOINT", "DISCUSS", "DOCTOR", "DRESS/CLOTHES", "DRINK", "EAT", "EMPHASIZE", "EXCUSE", "EXPERT", "FACE", "FED-UP/FULL", "FIFTH", "FINGERSPELL", "FIRE/BURN", "GET A TICKET", "GO", "CALIFORNIA", "GOVERNMENT", "GROUND", "GUITAR", "HAPPY", "IN", "INCLUDE/INVOLVE", "INFORM", "INJECT", "ISLAND/INTEREST", "LIVE", "LOOK", "MACHINE", "MAD", "MAN", "MARRY", "NICE/CLEAN", "PAST", "POSS", "RUN", "SAME", "SHELF/FLOOR", "SHOW", "SILLY", "STAND-UP", "TOUGH", "VACATION", "WALK", "WEEKEND", "WORK-OUT"]
 
     
     path = 'C:/Users/Devin/Documents/GitHub/ASL_Data/TempFolder/*.png'
@@ -90,10 +94,15 @@ def PredictVal ():
 def UserInput():
     
     text = input("Press enter to translate a video")
-    if (text == ""):
+    if (text != "eahidt"):
         text = input("Type the filepath for your next video\n")
         text = text.replace("\\", '/')
         filename, file_extension = os.path.splitext(text)
         nfHolder = filename + "_New" + file_extension
-        VidToImg(text, nfHolder)
+        try:
+            VidToImg(text, nfHolder)
+        
+        except:
+            print ("That doesn't seem to be a valid link. Please enter another.")
+            UserInput()
 UserInput()
